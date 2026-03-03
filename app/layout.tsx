@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GrowInsta - Affordable, Organic Instagram Growth",
-  description: "No bots. No fake users. Guaranteed results. Get real Instagram followers delivered organically.",
+  title: "Reach974 - Affordable, Organic Instagram Growth",
+  description: "Visibility. Awareness. Growth. For creators and businesses looking to grow their social presence through controlled visibility.",
 };
 
 export default function RootLayout({

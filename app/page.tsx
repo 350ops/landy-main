@@ -7,7 +7,6 @@ import { Footer } from "./sections/footer";
 import { Navbar } from "./sections/navbar";
 import { Logos } from "./sections/logos";
 import { Testimonials } from "./sections/testimonials";
-import { Pricing } from "./sections/pricing";
 
 export default function Home() {
   return (
@@ -18,7 +17,6 @@ export default function Home() {
       <Logos />
       <Mission />
       <Testimonials />
-      <Pricing />
       <FAQ />
       <CTA />
       <Footer />

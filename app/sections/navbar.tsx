@@ -24,9 +24,9 @@ export function Navbar() {
           {/* Logo */}
           <div onClick={() => scrollToSection("hero")} className="flex items-center gap-2 cursor-pointer">
             <div className="w-8 h-8 bg-black dark:bg-white rounded-lg flex items-center justify-center">
-              <span className="text-white dark:text-black font-bold text-lg">G</span>
+              <span className="text-white dark:text-black font-bold text-lg">R</span>
             </div>
-            <span className="text-xl font-bold text-zinc-900 dark:text-white">GrowInsta</span>
+            <span className="text-xl font-bold text-zinc-900 dark:text-white">Reach974</span>
           </div>
 
           {/* Navigation Links */}
@@ -49,12 +49,6 @@ export function Navbar() {
             >
               Results
             </button>
-            <button
-              onClick={() => scrollToSection("pricing")}
-              className="text-zinc-600 cursor-pointer dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors"
-            >
-              Pricing
-            </button>
 
             <button
               onClick={() => scrollToSection("faq")}
@@ -67,7 +61,7 @@ export function Navbar() {
           {/* CTA Buttons */}
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <button onClick={() => scrollToSection("pricing")} className="px-4 cursor-pointer py-2 text-xs bg-black dark:bg-white text-white dark:text-black rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors">
+            <button onClick={() => scrollToSection("hero")} className="px-4 cursor-pointer py-2 text-xs bg-black dark:bg-white text-white dark:text-black rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors">
               Get Followers
             </button>
           </div>

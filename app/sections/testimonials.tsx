@@ -20,7 +20,7 @@ export function Testimonials() {
       company: "@riveras_bakery",
       image: "/img/user-2.jpg",
       content:
-        "As a local bakery, Instagram presence matters. GrowInsta helped us reach more customers in our area. Our orders have doubled since growing our following.",
+        "As a local bakery, Instagram presence matters. Reach974 helped us reach more customers in our area. Our orders have doubled since growing our following.",
       rating: 5,
     },
     {

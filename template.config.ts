@@ -8,23 +8,24 @@
 export const templateConfig = {
   // Brand Information
   brand: {
-    name: "GrowInsta",
-    tagline: "Affordable, Accelerated, Organic Instagram Growth",
-    description: "No bots. No fake users. Guaranteed results. Get real Instagram followers delivered to your account organically.",
+    name: "Reach974",
+    tagline: "Visibility. Awareness. Growth.",
+    description: "For creators and businesses looking to grow their social presence audience through controlled visibility.",
+    domain: "reach974.com",
   },
 
   // Contact & Social
   contact: {
-    email: "hello@growinsta.com",
+    email: "hello@reach974.com",
     phone: "+1 (555) 987-6543",
   },
 
   social: {
-    twitter: "https://twitter.com/growinsta",
-    instagram: "https://instagram.com/growinsta",
-    linkedin: "https://linkedin.com/company/growinsta",
-    facebook: "https://facebook.com/growinsta",
-    tiktok: "https://tiktok.com/@growinsta",
+    twitter: "https://twitter.com/reach974",
+    instagram: "https://instagram.com/reach974",
+    linkedin: "https://linkedin.com/company/reach974",
+    facebook: "https://facebook.com/reach974",
+    tiktok: "https://tiktok.com/@reach974",
   },
 
   // Pricing per follower
@@ -84,7 +85,6 @@ export const templateConfig = {
     ],
     product: [
       { name: "Features", href: "#features" },
-      { name: "Pricing", href: "#pricing" },
       { name: "How It Works", href: "#about" },
       { name: "Results", href: "#testimonials" },
     ],
@@ -104,11 +104,11 @@ export const templateConfig = {
 
   // SEO & Metadata
   seo: {
-    title: "GrowInsta - Affordable, Organic Instagram Growth",
-    description: "No bots. No fake users. Guaranteed results. Get real Instagram followers delivered organically.",
-    keywords: ["instagram growth", "buy followers", "organic instagram", "real followers", "social media growth"],
+    title: "Reach974 - Affordable, Organic Instagram Growth",
+    description: "Visibility. Awareness. Growth. For creators and businesses looking to grow their social presence through controlled visibility.",
+    keywords: ["instagram growth", "buy followers", "organic instagram", "real followers", "social media growth", "reach974"],
     ogImage: "/og-image.png",
-    twitterHandle: "@growinsta",
+    twitterHandle: "@reach974",
   },
 };
 

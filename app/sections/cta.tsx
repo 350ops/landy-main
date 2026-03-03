@@ -26,7 +26,7 @@ export function CTA() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
           <button
-            onClick={() => scrollToSection("pricing")}
+            onClick={() => scrollToSection("hero")}
             className="group px-8 py-4 text-base bg-highlight text-black rounded-xl cursor-pointer font-semibold transition-all flex items-center justify-center gap-2 hover:bg-highlight/90"
           >
             Get Started Now
