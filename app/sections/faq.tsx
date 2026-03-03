@@ -8,29 +8,29 @@ export function FAQ() {
 
   const faqs = [
     {
-      question: "Is my data safe with this app?",
+      question: "Are the followers real people?",
       answer:
-        "Yes! We use industry-leading encryption standards to ensure your data is completely secure. Your information is encrypted both in transit and at rest, and we never share your data with third parties.",
+        "Yes, 100%. We only deliver real, active Instagram users. We never use bots, fake accounts, or inactive profiles. Every follower is a genuine person with an active account.",
     },
     {
-      question: "Which platforms are supported?",
+      question: "Do you need my password?",
       answer:
-        "We support a wide range of platforms, including iOS, Android, Web, and Desktop applications. You can seamlessly sync your data across all your devices for a unified experience.",
+        "Absolutely not. We never ask for your password or login credentials. All we need is your public Instagram username (handle). Your account security is never at risk.",
     },
     {
-      question: "How can I restore my account?",
+      question: "How fast will I see results?",
       answer:
-        "You can restore your account using your recovery phrase or backup key. Simply go to the login page, select 'Restore Account', and follow the step-by-step instructions. Make sure to keep your recovery phrase in a safe place.",
+        "Most orders begin delivering within a few hours. Depending on the size of your order, full delivery typically completes within 24 to 72 hours. We deliver gradually to keep growth looking natural.",
     },
     {
-      question: "How long do transactions take?",
+      question: "Is this safe for my Instagram account?",
       answer:
-        "Transaction times vary depending on network conditions, but typically complete within 5-10 minutes. You can track the status of your transactions in real-time through our app.",
+        "Yes. Our organic delivery method is designed to look completely natural. We never violate Instagram's terms of service, and our gradual delivery approach ensures your account stays safe.",
     },
     {
-      question: "Are there any fees for using the app?",
+      question: "What if I don't get the followers?",
       answer:
-        "The app is free to download and use. However, standard network fees may apply for certain transactions. We always display all fees transparently before you confirm any action.",
+        "We offer a money-back guarantee. If we fail to deliver the followers you ordered, you'll receive a full refund. We also provide free refills if any followers drop within 30 days of delivery.",
     },
   ];
 
@@ -46,7 +46,7 @@ export function FAQ() {
             Frequently asked questions
           </h2>
           <p className="text-lg text-zinc-600 dark:text-zinc-400">
-            We have quick answers to the most popular questions below
+            Everything you need to know about our Instagram growth service
           </p>
         </div>
 
@@ -93,4 +93,3 @@ export function FAQ() {
     </section>
   );
 }
-

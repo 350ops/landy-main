@@ -1,13 +1,12 @@
 "use client";
 
 import { ThemeToggle } from "../components/theme-toggle";
-import Link from "next/link";
 
 export function Navbar() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
-      const offset = 80; // Offset for fixed navbar
+      const offset = 80;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - offset;
 
@@ -25,9 +24,9 @@ export function Navbar() {
           {/* Logo */}
           <div onClick={() => scrollToSection("hero")} className="flex items-center gap-2 cursor-pointer">
             <div className="w-8 h-8 bg-black dark:bg-white rounded-lg flex items-center justify-center">
-              <span className="text-white dark:text-black font-bold text-lg">A</span>
+              <span className="text-white dark:text-black font-bold text-lg">G</span>
             </div>
-            <span className="text-xl font-bold text-zinc-900 dark:text-white">AppName</span>
+            <span className="text-xl font-bold text-zinc-900 dark:text-white">GrowInsta</span>
           </div>
 
           {/* Navigation Links */}
@@ -42,13 +41,13 @@ export function Navbar() {
               onClick={() => scrollToSection("about")}
               className="text-zinc-600 cursor-pointer dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors"
             >
-              Mission
+              How It Works
             </button>
             <button
               onClick={() => scrollToSection("testimonials")}
               className="text-zinc-600 cursor-pointer dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors"
             >
-              Testimonials
+              Results
             </button>
             <button
               onClick={() => scrollToSection("pricing")}
@@ -56,7 +55,7 @@ export function Navbar() {
             >
               Pricing
             </button>
-            
+
             <button
               onClick={() => scrollToSection("faq")}
               className="text-zinc-600 cursor-pointer dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors"
@@ -68,11 +67,8 @@ export function Navbar() {
           {/* CTA Buttons */}
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <Link href="/signup" className="px-4 cursor-pointer py-2 text-xs  border border-zinc-500 dark:border-zinc-200 rounded-xl font-medium transition-colors">
-              Sign up
-            </Link>
-            <button onClick={() => scrollToSection("cta")} className="px-4 cursor-pointer py-2 text-xs bg-black dark:bg-white text-white dark:text-black rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors">
-              Download App
+            <button onClick={() => scrollToSection("pricing")} className="px-4 cursor-pointer py-2 text-xs bg-black dark:bg-white text-white dark:text-black rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors">
+              Get Followers
             </button>
           </div>
         </div>
@@ -80,4 +76,3 @@ export function Navbar() {
     </nav>
   );
 }
-

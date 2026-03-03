@@ -6,28 +6,28 @@ import * as motion from "motion/react-client"
 export function Features() {
   const features = [
     {
-      icon: "lock",
-      title: "Secure & Private",
-      description: "Your data is encrypted and protected with industry-leading security",
+      icon: "users",
+      title: "100% Real Followers",
+      description: "Every follower is a real, active Instagram user. No bots, no ghost accounts — ever.",
       accentColor: "lime",
     },
     {
-      icon: "refresh-cw",
-      title: "Real-time Sync",
-      description: "Seamlessly sync your data across all your devices instantly",
+      icon: "shield-check",
+      title: "Safe & Secure",
+      description: "We never ask for your password. Just provide your public Instagram handle and we do the rest.",
       accentColor: "lime",
       isHighlight: true,
     },
     {
-      icon: "fingerprint",
-      title: "Advanced Authentication",
-      description: "Biometric login and multi-factor security for extra protection",
+      icon: "zap",
+      title: "Fast Delivery",
+      description: "Start seeing new followers within hours of your order. Most orders complete within 24-72 hours.",
       accentColor: "lime",
     },
     {
-      icon: "qr-code",
-      title: "Quick Access",
-      description: "Scan and share information effortlessly with QR codes",
+      icon: "trending-up",
+      title: "Organic Growth",
+      description: "Natural-looking, gradual delivery that keeps your account safe and your engagement high.",
       accentColor: "lime",
     },
   ];
@@ -36,7 +36,7 @@ export function Features() {
     <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         {/* Section Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 100 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
@@ -44,26 +44,26 @@ export function Features() {
           className="text-center mb-16 space-y-4"
         >
           <div className="inline-block px-4 py-1.5 bg-highlight rounded-full">
-            <span className="text-xs uppercase font-bold text-black">Features</span>
+            <span className="text-xs uppercase font-bold text-black">Why Choose Us</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white">
-            Powerful features for<br />
-            modern users
+            Real growth,<br />
+            real results
           </h2>
           <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-            Everything you need to stay productive and connected, designed with simplicity and efficiency in mind.
+            We deliver authentic Instagram followers that engage with your content, helping you build a genuine audience.
           </p>
         </motion.div>
 
         {/* Features Grid */}
-        <motion.div 
+        <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
-        transition={{ 
-          duration: 0.5, 
+        transition={{
+          duration: 0.5,
           delay:0.4,
-          ease: cubicBezier(0.4, 0, 0.2, 1) 
+          ease: cubicBezier(0.4, 0, 0.2, 1)
         }}
         className="grid md:grid-cols-2 lg:grid-cols-4 gap-2">
           {features.map((feature, index) => (
@@ -90,4 +90,3 @@ export function Features() {
     </section>
   );
 }
-

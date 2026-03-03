@@ -6,30 +6,30 @@ import { cubicBezier } from "motion/react";
 export function Testimonials() {
   const testimonials = [
     {
-      name: "Sarah Johnson",
-      role: "Product Manager",
-      company: "TechCorp",
+      name: "Sarah Mitchell",
+      role: "Fashion Blogger",
+      company: "@sarahstyles",
       image: "/img/user-1.jpg",
       content:
-        "This app has completely transformed how we handle our daily operations. The interface is intuitive and the features are exactly what we needed.",
+        "I went from 800 to 2,500 followers in just two weeks. The followers are real people who actually engage with my posts. Incredible service!",
       rating: 5,
     },
     {
-      name: "Michael Chen",
-      role: "Entrepreneur",
-      company: "StartupXYZ",
+      name: "Marcus Rivera",
+      role: "Small Business Owner",
+      company: "@riveras_bakery",
       image: "/img/user-2.jpg",
       content:
-        "I've tried many similar solutions, but this one stands out. The security features give me peace of mind, and the customer support is outstanding.",
+        "As a local bakery, Instagram presence matters. GrowInsta helped us reach more customers in our area. Our orders have doubled since growing our following.",
       rating: 5,
     },
     {
-      name: "Emma Williams",
-      role: "Designer",
-      company: "Creative Studio",
+      name: "Emma Chen",
+      role: "Content Creator",
+      company: "@emmacreates",
       image: "/img/user-3.jpg",
       content:
-        "Beautiful design and seamless user experience. It's rare to find an app that combines functionality with such great aesthetics.",
+        "Super easy to use — I literally just typed my handle, picked my followers, and paid. The delivery was smooth and my engagement rate actually went up.",
       rating: 5,
     },
   ];
@@ -38,34 +38,34 @@ export function Testimonials() {
     <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         {/* Section Header */}
-        <motion.div 
-        
+        <motion.div
+
         initial={{ opacity: 0, y: 100 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.5, delay:0.2, ease: cubicBezier(0.4, 0, 0.2, 1) }}
         className="text-center mb-16 space-y-3">
           <div className="inline-block px-4 py-1.5 bg-highlight rounded-full">
-            <span className="text-xs uppercase font-bold text-black">Testimonials</span>
+            <span className="text-xs uppercase font-bold text-black">Results</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white">
-            Loved by users worldwide
+            Real people, real growth
           </h2>
           <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-            Don't just take our word for it - hear what our customers have to say
+            See what our customers have to say about their Instagram growth
           </p>
         </motion.div>
 
         {/* Testimonials Grid */}
-        <motion.div 
-        
+        <motion.div
+
         initial={{ opacity: 0, scale: 0.8 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
-        transition={{ 
-          duration: 0.5, 
+        transition={{
+          duration: 0.5,
           delay:0.4,
-          ease: cubicBezier(0.4, 0, 0.2, 1) 
+          ease: cubicBezier(0.4, 0, 0.2, 1)
         }}
         className="grid md:grid-cols-2 lg:grid-cols-3 gap-2">
           {testimonials.map((testimonial, index) => (
@@ -82,7 +82,7 @@ export function Testimonials() {
 
               {/* Content */}
               <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                "{testimonial.content}"
+                &ldquo;{testimonial.content}&rdquo;
               </p>
 
               {/* Author */}
@@ -95,7 +95,7 @@ export function Testimonials() {
                     {testimonial.name}
                   </div>
                   <div className="text-sm text-zinc-500 dark:text-zinc-500">
-                    {testimonial.role} at {testimonial.company}
+                    {testimonial.role} · {testimonial.company}
                   </div>
                 </div>
               </div>
@@ -107,4 +107,3 @@ export function Testimonials() {
     </section>
   );
 }
-

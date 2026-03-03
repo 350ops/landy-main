@@ -18,10 +18,9 @@ export default function Home() {
       <Logos />
       <Mission />
       <Testimonials />
-      <CTA />
       <Pricing />
       <FAQ />
-      
+      <CTA />
       <Footer />
     </main>
   );

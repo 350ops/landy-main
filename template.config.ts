@@ -1,6 +1,6 @@
 /**
  * Template Configuration
- * 
+ *
  * Customize your landing page by editing the values below.
  * This centralizes common customizations for easier template management.
  */
@@ -8,29 +8,32 @@
 export const templateConfig = {
   // Brand Information
   brand: {
-    name: "AppName",
-    tagline: "Secure & Easy-to-Use App Solution",
-    description: "Store, Send & Receive everything with confidence. Experience the future of digital solutions.",
+    name: "GrowInsta",
+    tagline: "Affordable, Accelerated, Organic Instagram Growth",
+    description: "No bots. No fake users. Guaranteed results. Get real Instagram followers delivered to your account organically.",
   },
 
   // Contact & Social
   contact: {
-    email: "hello@yourapp.com",
-    phone: "+1 (555) 123-4567",
+    email: "hello@growinsta.com",
+    phone: "+1 (555) 987-6543",
   },
 
   social: {
-    twitter: "https://twitter.com/yourapp",
-    github: "https://github.com/yourapp",
-    linkedin: "https://linkedin.com/company/yourapp",
-    facebook: "https://facebook.com/yourapp",
-    instagram: "https://instagram.com/yourapp",
+    twitter: "https://twitter.com/growinsta",
+    instagram: "https://instagram.com/growinsta",
+    linkedin: "https://linkedin.com/company/growinsta",
+    facebook: "https://facebook.com/growinsta",
+    tiktok: "https://tiktok.com/@growinsta",
   },
 
-  // App Store Links
-  appStores: {
-    ios: "https://apps.apple.com/app/yourapp",
-    android: "https://play.google.com/store/apps/details?id=com.yourapp",
+  // Pricing per follower
+  pricing: {
+    minFollowers: 50,
+    maxFollowers: 3000,
+    defaultFollowers: 500,
+    pricePerFollower: 0.05,
+    currency: "USD",
   },
 
   // Theme Colors (Tailwind classes)
@@ -44,74 +47,69 @@ export const templateConfig = {
   // Features Section
   features: [
     {
-      icon: "🔒",
-      title: "Non-Custodial Wallet",
-      description: "Full control over your private keys",
-      link: "#",
+      icon: "users",
+      title: "100% Real Followers",
+      description: "Every follower is a real person with an active Instagram account",
     },
     {
-      icon: "🔄",
-      title: "Built-in Exchange",
-      description: "Swap cryptocurrencies directly within the app",
-      link: "#",
+      icon: "shield-check",
+      title: "Safe & Secure",
+      description: "We never ask for your password. Just your public Instagram handle",
     },
     {
-      icon: "👤",
-      title: "Biometric Security",
-      description: "Face ID & multifactor authentication for extra protection",
-      link: "#",
+      icon: "zap",
+      title: "Fast Delivery",
+      description: "Start seeing new followers within hours of placing your order",
     },
     {
-      icon: "📱",
-      title: "QR Code Payments",
-      description: "Send and receive crypto effortlessly",
-      link: "#",
+      icon: "trending-up",
+      title: "Organic Growth",
+      description: "Natural-looking growth that keeps your account safe from bans",
     },
   ],
 
-  // Stats for CTA Section
+  // Stats
   stats: {
-    users: "500K+",
+    followers: "10M+",
     rating: "4.9★",
-    countries: "150+",
+    customers: "50K+",
   },
 
   // Navigation Links
   navigation: {
     main: [
-      { name: "About us", href: "#about" },
+      { name: "How It Works", href: "#about" },
       { name: "Features", href: "#features" },
       { name: "FAQ", href: "#faq" },
     ],
     product: [
-      { name: "Features", href: "#" },
-      { name: "Pricing", href: "#" },
-      { name: "Security", href: "#" },
-      { name: "Roadmap", href: "#" },
+      { name: "Features", href: "#features" },
+      { name: "Pricing", href: "#pricing" },
+      { name: "How It Works", href: "#about" },
+      { name: "Results", href: "#testimonials" },
     ],
     company: [
       { name: "About Us", href: "#" },
-      { name: "Careers", href: "#" },
       { name: "Blog", href: "#" },
-      { name: "Press Kit", href: "#" },
+      { name: "Careers", href: "#" },
+      { name: "Contact", href: "#" },
     ],
     support: [
       { name: "Help Center", href: "#" },
       { name: "Contact Us", href: "#" },
-      { name: "Status", href: "#" },
-      { name: "Terms of Service", href: "#" },
+      { name: "FAQ", href: "#faq" },
+      { name: "Terms of Service", href: "/terms" },
     ],
   },
 
   // SEO & Metadata
   seo: {
-    title: "AppName - Secure & Easy-to-Use App Solution",
-    description: "Store, Send & Receive everything with confidence. Experience the future of digital solutions.",
-    keywords: ["app", "secure", "easy-to-use", "digital", "solution"],
+    title: "GrowInsta - Affordable, Organic Instagram Growth",
+    description: "No bots. No fake users. Guaranteed results. Get real Instagram followers delivered organically.",
+    keywords: ["instagram growth", "buy followers", "organic instagram", "real followers", "social media growth"],
     ogImage: "/og-image.png",
-    twitterHandle: "@yourapp",
+    twitterHandle: "@growinsta",
   },
 };
 
 export type TemplateConfig = typeof templateConfig;
-

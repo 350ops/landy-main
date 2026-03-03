@@ -12,12 +12,12 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-black dark:bg-white rounded-lg flex items-center justify-center">
-                <span className="text-white dark:text-black font-bold text-lg">A</span>
+                <span className="text-white dark:text-black font-bold text-lg">G</span>
               </div>
-              <span className="text-xl font-bold text-zinc-900 dark:text-white">AppName</span>
+              <span className="text-xl font-bold text-zinc-900 dark:text-white">GrowInsta</span>
             </div>
             <p className="text-zinc-600 dark:text-zinc-400 text-sm">
-              Building the future of digital solutions, one user at a time.
+              Affordable, organic Instagram growth. Real followers, real results, guaranteed.
             </p>
             {/* Social Links */}
             <div className="flex gap-3">
@@ -40,7 +40,7 @@ export function Footer() {
               Product
             </h3>
             <ul className="space-y-3">
-              {["Features", "Pricing", "Security", "Roadmap"].map((item) => (
+              {["Features", "Pricing", "How It Works", "Results"].map((item) => (
                 <li key={item}>
                   <Link
                     href="#"
@@ -59,7 +59,7 @@ export function Footer() {
               Company
             </h3>
             <ul className="space-y-3">
-              {["About Us", "Careers", "Blog", "Press Kit"].map((item) => (
+              {["About Us", "Blog", "Careers", "Contact"].map((item) => (
                 <li key={item}>
                   <Link
                     href="#"
@@ -78,7 +78,7 @@ export function Footer() {
               Support
             </h3>
             <ul className="space-y-3">
-              {["Help Center", "Contact Us", "Status", "Terms of Service"].map((item) => (
+              {["Help Center", "Contact Us", "FAQ", "Terms of Service"].map((item) => (
                 <li key={item}>
                   <Link
                     href="#"
@@ -95,9 +95,8 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-zinc-600 dark:text-zinc-400 text-sm">
-            © {currentYear} AppName. All rights reserved.
+            &copy; {currentYear} GrowInsta. All rights reserved.
           </p>
-          <p className="text-zinc-600 dark:text-zinc-400 text-sm">Built by Thomino</p>
           <div className="flex gap-6 text-sm">
             <Link
               href="/privacy-policy"
@@ -117,4 +116,3 @@ export function Footer() {
     </footer>
   );
 }
-
