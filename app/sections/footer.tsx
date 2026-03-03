@@ -12,12 +12,12 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-black dark:bg-white rounded-lg flex items-center justify-center">
-                <span className="text-white dark:text-black font-bold text-lg">G</span>
+                <span className="text-white dark:text-black font-bold text-lg">R</span>
               </div>
-              <span className="text-xl font-bold text-zinc-900 dark:text-white">GrowInsta</span>
+              <span className="text-xl font-bold text-zinc-900 dark:text-white">Reach974</span>
             </div>
             <p className="text-zinc-600 dark:text-zinc-400 text-sm">
-              Affordable, organic Instagram growth. Real followers, real results, guaranteed.
+              Visibility. Awareness. Growth. For creators and businesses looking to grow their social presence.
             </p>
             {/* Social Links */}
             <div className="flex gap-3">
@@ -95,7 +95,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-zinc-600 dark:text-zinc-400 text-sm">
-            &copy; {currentYear} GrowInsta. All rights reserved.
+            &copy; {currentYear} Reach974. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm">
             <Link

@@ -1,121 +1,259 @@
 "use client";
+
+import { useState } from "react";
 import { DynamicIcon } from "lucide-react/dynamic";
 import * as motion from "motion/react-client"
 import { cubicBezier } from "motion/react";
 
+const PRICE_PER_FOLLOWER = 0.05;
+const MIN_FOLLOWERS = 50;
+const MAX_FOLLOWERS = 3000;
+const STEP = 50;
+
+function formatPrice(followers: number): string {
+  return (followers * PRICE_PER_FOLLOWER).toFixed(2);
+}
+
 export function Hero() {
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const offset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
-      window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+  const [followers, setFollowers] = useState(500);
+  const [handle, setHandle] = useState("");
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+
+  const handleNext = () => {
+    if (step === 1) {
+      setStep(2);
+    } else if (step === 2 && handle.trim().length > 0) {
+      setStep(3);
     }
   };
 
+  const handleBack = () => {
+    if (step === 2) setStep(1);
+    if (step === 3) setStep(2);
+  };
+
+  const handleCheckout = () => {
+    alert(`Order placed! ${followers} followers for @${handle.replace("@", "")} — $${formatPrice(followers)}. Stripe integration coming soon.`);
+  };
+
   return (
-    <section id="hero" className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex md:flex-row flex-col gap-4">
-          {/* Left Column - Text Content */}
+    <section id="hero" className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 min-h-screen flex items-center">
+      <div className="max-w-7xl mx-auto w-full">
+        <div className="flex md:flex-row flex-col gap-6 items-center">
+          {/* Left Column - Branding */}
           <motion.div
             initial={{ opacity: 0, x: -200 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, ease: cubicBezier(0.4, 0, 0.2, 1) }}
-            className="bg-white dark:bg-neutral-950 p-6 md:p-12 rounded-4xl w-full md:w-1/2 flex flex-col">
+            className="w-full md:w-1/2 flex flex-col justify-center">
 
-            <h1 className="text-5xl md:text-6xl font-bold text-neutral-900 dark:text-white">
-              Organic Instagram Growth
-            </h1>
-
-            <p className="text-lg text-neutral-600 dark:text-neutral-400 max-w-lg my-6">
-              No bots. No fake users. Guaranteed results. Get real followers delivered to your Instagram account — affordably and fast.
+            <p className="text-sm md:text-base font-medium text-zinc-500 dark:text-zinc-400 tracking-wide mb-4">
+              Visibility. Awareness. Growth.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button onClick={() => scrollToSection("pricing")} className="group px-6 py-3 text-sm bg-highlight text-black rounded-xl cursor-pointer font-semibold transition-all flex items-center justify-center gap-2">
-                Get Started Now
-                <DynamicIcon name="arrow-right" className="w-5 h-5" />
-              </button>
-            </div>
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-neutral-900 dark:text-white leading-[0.95] mb-6">
+              <span className="bg-gradient-to-r from-purple-500 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">REACH</span>974
+            </h1>
+
+            <p className="text-lg md:text-xl text-neutral-600 dark:text-neutral-400 max-w-lg mb-8 leading-relaxed">
+              For creators and businesses looking to grow their social presence audience through controlled visibility.
+            </p>
 
             {/* Trust Badges */}
-            <div className="flex md:flex-row flex-col flex-wrap gap-4 pt-4 mt-auto">
+            <div className="flex flex-wrap gap-3">
               <div className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl flex items-center gap-2">
-                <DynamicIcon name="shield-check" className="w-5 h-5 text-highlight" />
-                <div className="text-left">
-                  <div className="text-sm font-semibold text-zinc-900 dark:text-white">No Password Required</div>
-                </div>
+                <DynamicIcon name="shield-check" className="w-4 h-4 text-purple-500" />
+                <span className="text-sm font-medium text-zinc-900 dark:text-white">No Password Required</span>
               </div>
               <div className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl flex items-center gap-2">
-                <DynamicIcon name="users" className="w-5 h-5 text-highlight" />
-                <div className="text-left">
-                  <div className="text-sm font-semibold text-zinc-900 dark:text-white">100% Real Followers</div>
-                </div>
+                <DynamicIcon name="users" className="w-4 h-4 text-purple-500" />
+                <span className="text-sm font-medium text-zinc-900 dark:text-white">100% Real Followers</span>
               </div>
               <div className="px-4 py-2 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl flex items-center gap-2">
-                <DynamicIcon name="zap" className="w-5 h-5 text-highlight" />
-                <div className="text-left">
-                  <div className="text-sm font-semibold text-zinc-900 dark:text-white">Fast Delivery</div>
-                </div>
+                <DynamicIcon name="zap" className="w-4 h-4 text-purple-500" />
+                <span className="text-sm font-medium text-zinc-900 dark:text-white">Fast Delivery</span>
               </div>
             </div>
           </motion.div>
 
-          {/* Right Column - Stats & Social Proof */}
+          {/* Right Column - Purchase Flow */}
           <motion.div
-
-          initial={{ opacity: 0, x: 200 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, ease: cubicBezier(0.4, 0, 0.2, 1), delay: 0 }}
-          className="w-full md:w-1/2 bg-highlight rounded-4xl flex-shrink overflow-hidden relative">
-            <div className="relative lg:h-[600px] flex items-center justify-center p-8 md:p-12">
-              <div className="w-full max-w-sm space-y-8">
-                {/* Big Stat */}
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3, ease: cubicBezier(0.4, 0, 0.2, 1) }}
-                  className="text-center"
-                >
-                  <div className="text-7xl md:text-8xl font-black text-black">10M+</div>
-                  <div className="text-lg font-semibold text-black/70">Followers Delivered</div>
-                </motion.div>
-
-                {/* Stats Grid */}
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5, ease: cubicBezier(0.4, 0, 0.2, 1) }}
-                  className="grid grid-cols-2 gap-4"
-                >
-                  <div className="bg-black/10 rounded-2xl p-4 text-center">
-                    <div className="text-3xl font-bold text-black">50K+</div>
-                    <div className="text-sm font-medium text-black/70">Happy Customers</div>
+            initial={{ opacity: 0, x: 200 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: cubicBezier(0.4, 0, 0.2, 1), delay: 0.1 }}
+            className="w-full md:w-1/2 flex justify-center"
+          >
+            <div className="w-full max-w-md">
+              {/* Progress Steps */}
+              <div className="flex items-center justify-center gap-2 mb-6">
+                {[1, 2, 3].map((s) => (
+                  <div key={s} className="flex items-center gap-2">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+                      step >= s ? "bg-highlight text-black" : "bg-zinc-200 dark:bg-zinc-800 text-zinc-500"
+                    }`}>
+                      {step > s ? <DynamicIcon name="check" className="w-4 h-4" /> : s}
+                    </div>
+                    {s < 3 && (
+                      <div className={`w-12 h-0.5 transition-all ${step > s ? "bg-highlight" : "bg-zinc-200 dark:bg-zinc-800"}`} />
+                    )}
                   </div>
-                  <div className="bg-black/10 rounded-2xl p-4 text-center">
-                    <div className="text-3xl font-bold text-black">4.9★</div>
-                    <div className="text-sm font-medium text-black/70">Average Rating</div>
-                  </div>
-                </motion.div>
+                ))}
+              </div>
 
-                {/* Trust Line */}
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.6, delay: 0.7 }}
-                  className="flex items-center justify-center gap-2 text-black/80"
-                >
-                  <DynamicIcon name="check-circle" className="w-5 h-5" />
-                  <span className="text-sm font-semibold">Guaranteed results or your money back</span>
-                </motion.div>
+              {/* Main Card */}
+              <div className="relative bg-white dark:bg-zinc-950 rounded-3xl p-8 border-2 border-highlight shadow-2xl shadow-highlight/20">
+
+                {/* Step 1: Choose Followers */}
+                {step === 1 && (
+                  <div className="space-y-8">
+                    <div className="text-center">
+                      <div className="text-6xl font-black text-zinc-900 dark:text-white">{followers.toLocaleString()}</div>
+                      <div className="text-zinc-500 dark:text-zinc-400 mt-1">followers</div>
+                    </div>
+
+                    {/* Slider */}
+                    <div className="space-y-3">
+                      <input
+                        type="range"
+                        min={MIN_FOLLOWERS}
+                        max={MAX_FOLLOWERS}
+                        step={STEP}
+                        value={followers}
+                        onChange={(e) => setFollowers(Number(e.target.value))}
+                        className="w-full h-2 bg-zinc-200 dark:bg-zinc-800 rounded-full appearance-none cursor-pointer accent-lime-400 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-highlight [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-highlight [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-black [&::-moz-range-thumb]:cursor-pointer"
+                      />
+                      <div className="flex justify-between text-xs text-zinc-400">
+                        <span>{MIN_FOLLOWERS}</span>
+                        <span>{MAX_FOLLOWERS.toLocaleString()}</span>
+                      </div>
+                    </div>
+
+                    {/* Price */}
+                    <div className="text-center bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-4">
+                      <div className="flex items-baseline justify-center gap-1">
+                        <span className="text-4xl font-bold text-zinc-900 dark:text-white">${formatPrice(followers)}</span>
+                      </div>
+                      <div className="text-sm text-zinc-500 mt-1">
+                        ${PRICE_PER_FOLLOWER.toFixed(2)} per follower
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={handleNext}
+                      className="w-full cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-highlight text-black hover:bg-highlight/90 flex items-center justify-center gap-2"
+                    >
+                      Continue
+                      <DynamicIcon name="arrow-right" className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+
+                {/* Step 2: Enter Handle */}
+                {step === 2 && (
+                  <div className="space-y-8">
+                    <div className="text-center">
+                      <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Enter your Instagram handle</h3>
+                      <p className="text-sm text-zinc-500 mt-1">We&apos;ll deliver {followers.toLocaleString()} followers to this account</p>
+                    </div>
+
+                    <div className="relative">
+                      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-semibold">@</div>
+                      <input
+                        type="text"
+                        value={handle}
+                        onChange={(e) => setHandle(e.target.value.replace(/[^a-zA-Z0-9._]/g, ""))}
+                        placeholder="yourusername"
+                        className="w-full pl-10 pr-4 py-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-lg font-medium text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-highlight focus:border-transparent"
+                        autoFocus
+                      />
+                    </div>
+
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleBack}
+                        className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                      >
+                        Back
+                      </button>
+                      <button
+                        onClick={handleNext}
+                        disabled={handle.trim().length === 0}
+                        className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-highlight text-black hover:bg-highlight/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      >
+                        Continue
+                        <DynamicIcon name="arrow-right" className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Step 3: Confirm & Pay */}
+                {step === 3 && (
+                  <div className="space-y-6">
+                    <div className="text-center">
+                      <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Confirm your order</h3>
+                    </div>
+
+                    <div className="bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-6 space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-zinc-600 dark:text-zinc-400">Account</span>
+                        <span className="font-semibold text-zinc-900 dark:text-white">@{handle.replace("@", "")}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-zinc-600 dark:text-zinc-400">Followers</span>
+                        <span className="font-semibold text-zinc-900 dark:text-white">{followers.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-zinc-600 dark:text-zinc-400">Delivery</span>
+                        <span className="font-semibold text-zinc-900 dark:text-white">24-72 hours</span>
+                      </div>
+                      <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4 flex justify-between items-center">
+                        <span className="font-bold text-zinc-900 dark:text-white">Total</span>
+                        <span className="text-2xl font-black text-zinc-900 dark:text-white">${formatPrice(followers)}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-sm text-zinc-500">
+                      <DynamicIcon name="shield-check" className="w-4 h-4 text-highlight" />
+                      <span>Money-back guarantee if we don&apos;t deliver</span>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <button
+                        onClick={handleBack}
+                        className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                      >
+                        Back
+                      </button>
+                      <button
+                        onClick={handleCheckout}
+                        className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-highlight text-black hover:bg-highlight/90 flex items-center justify-center gap-2"
+                      >
+                        <DynamicIcon name="lock" className="w-4 h-4" />
+                        Pay ${formatPrice(followers)}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Features below card */}
+              <div className="flex flex-wrap justify-center gap-4 mt-6 text-sm text-zinc-500">
+                <div className="flex items-center gap-1">
+                  <DynamicIcon name="check-circle" className="w-4 h-4 text-highlight" />
+                  <span>Real followers</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <DynamicIcon name="check-circle" className="w-4 h-4 text-highlight" />
+                  <span>No password needed</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <DynamicIcon name="check-circle" className="w-4 h-4 text-highlight" />
+                  <span>30-day refill guarantee</span>
+                </div>
               </div>
             </div>
           </motion.div>
-        </div>
-        <div className="w-full flex flex-row items-center justify-center mt-10">
-          <DynamicIcon name="chevron-down" className="size-6 animate-bounce" />
         </div>
       </div>
     </section>
