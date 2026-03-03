@@ -1,61 +1,41 @@
 "use client";
 
+import { useState } from "react";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { cubicBezier } from "motion/react";
 import * as motion from "motion/react-client";
 
+const PRICE_PER_FOLLOWER = 0.05;
+const MIN_FOLLOWERS = 50;
+const MAX_FOLLOWERS = 3000;
+const STEP = 50;
+
+function formatPrice(followers: number): string {
+  return (followers * PRICE_PER_FOLLOWER).toFixed(2);
+}
+
 export function Pricing() {
-  const pricingPlans = [
-    {
-      name: "Starter",
-      price: "Free",
-      period: "forever",
-      description: "Perfect for trying out our platform",
-      features: [
-        "Up to 3 projects",
-        "Basic analytics",
-        "24/7 support",
-        "1GB storage",
-        "Community access",
-      ],
-      cta: "Get Started",
-      highlighted: false,
-    },
-    {
-      name: "Pro",
-      price: "$29",
-      period: "/mo",
-      description: "Best for professional users",
-      features: [
-        "Unlimited projects",
-        "Advanced analytics",
-        "Priority support",
-        "100GB storage",
-        "API access",
-        "Custom integrations",
-        "Team collaboration",
-      ],
-      cta: "Start Free Trial",
-      highlighted: true,
-      badge: "Most Popular",
-    },
-    {
-      name: "Enterprise",
-      price: "Custom",
-      period: "",
-      description: "For large organizations",
-      features: [
-        "Everything in Pro",
-        "Dedicated support",
-        "Unlimited storage",
-        "Custom contracts",
-        "SLA guarantee",
-        "Advanced security",
-      ],
-      cta: "Contact Sales",
-      highlighted: false,
-    },
-  ];
+  const [followers, setFollowers] = useState(500);
+  const [handle, setHandle] = useState("");
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+
+  const handleNext = () => {
+    if (step === 1) {
+      setStep(2);
+    } else if (step === 2 && handle.trim().length > 0) {
+      setStep(3);
+    }
+  };
+
+  const handleBack = () => {
+    if (step === 2) setStep(1);
+    if (step === 3) setStep(2);
+  };
+
+  const handleCheckout = () => {
+    // Stripe integration will go here
+    alert(`Order placed! ${followers} followers for @${handle.replace("@", "")} — $${formatPrice(followers)}. Stripe integration coming soon.`);
+  };
 
   return (
     <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8">
@@ -69,17 +49,17 @@ export function Pricing() {
           className="text-center mb-16 space-y-4"
         >
           <div className="inline-block px-4 py-1.5 bg-highlight rounded-full">
-            <span className="text-xs uppercase font-bold text-black">Pricing</span>
+            <span className="text-xs uppercase font-bold text-black">Get Followers</span>
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white">
-            Simple, transparent pricing
+            Choose your growth
           </h2>
           <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-            Choose the perfect plan for your needs. Always flexible to scale up or down.
+            Pick how many followers you want, enter your handle, and checkout. It&apos;s that simple.
           </p>
         </motion.div>
 
-        {/* Pricing Grid */}
+        {/* Order Flow */}
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -89,98 +69,178 @@ export function Pricing() {
             delay: 0.4,
             ease: cubicBezier(0.4, 0, 0.2, 1),
           }}
-          className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto"
+          className="max-w-lg mx-auto"
         >
-          {pricingPlans.map((plan, index) => (
-            <div
-              key={index}
-              className={`relative flex flex-col bg-white dark:bg-zinc-950 rounded-3xl p-8 transition-all duration-300 ${
-                plan.highlighted
-                  ? "border-2 border-highlight shadow-2xl shadow-highlight/20 scale-105"
-                  : "border border-transparent"
-              }`}
-            >
-              {/* Badge for highlighted plan */}
-              {plan.badge && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="px-4 py-1.5 bg-highlight text-black text-xs font-bold rounded-full uppercase">
-                    {plan.badge}
-                  </span>
+          {/* Progress Steps */}
+          <div className="flex items-center justify-center gap-2 mb-8">
+            {[1, 2, 3].map((s) => (
+              <div key={s} className="flex items-center gap-2">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+                  step >= s ? "bg-highlight text-black" : "bg-zinc-200 dark:bg-zinc-800 text-zinc-500"
+                }`}>
+                  {step > s ? <DynamicIcon name="check" className="w-4 h-4" /> : s}
                 </div>
-              )}
+                {s < 3 && (
+                  <div className={`w-12 h-0.5 transition-all ${step > s ? "bg-highlight" : "bg-zinc-200 dark:bg-zinc-800"}`} />
+                )}
+              </div>
+            ))}
+          </div>
 
-              {/* Plan Name */}
-              <h3 className="text-xl font-bold text-zinc-900 dark:text-white">
-                {plan.name}
-              </h3>
+          {/* Main Card */}
+          <div className="relative bg-white dark:bg-zinc-950 rounded-3xl p-8 border-2 border-highlight shadow-2xl shadow-highlight/20">
 
-              {/* Plan Description */}
-              <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-6">
-                {plan.description}
-              </p>
+            {/* Step 1: Choose Followers */}
+            {step === 1 && (
+              <div className="space-y-8">
+                <div className="text-center">
+                  <div className="text-6xl font-black text-zinc-900 dark:text-white">{followers.toLocaleString()}</div>
+                  <div className="text-zinc-500 dark:text-zinc-400 mt-1">followers</div>
+                </div>
 
-              {/* Price */}
-              <div className="mb-8">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold text-zinc-900 dark:text-white">
-                    {plan.price}
-                  </span>
-                  {plan.period && (
-                    <span className="text-zinc-600 dark:text-zinc-400">
-                      {plan.period}
-                    </span>
-                  )}
+                {/* Slider */}
+                <div className="space-y-3">
+                  <input
+                    type="range"
+                    min={MIN_FOLLOWERS}
+                    max={MAX_FOLLOWERS}
+                    step={STEP}
+                    value={followers}
+                    onChange={(e) => setFollowers(Number(e.target.value))}
+                    className="w-full h-2 bg-zinc-200 dark:bg-zinc-800 rounded-full appearance-none cursor-pointer accent-lime-400 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-highlight [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-black [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:h-6 [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-highlight [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-black [&::-moz-range-thumb]:cursor-pointer"
+                  />
+                  <div className="flex justify-between text-xs text-zinc-400">
+                    <span>{MIN_FOLLOWERS}</span>
+                    <span>{MAX_FOLLOWERS.toLocaleString()}</span>
+                  </div>
+                </div>
+
+                {/* Price */}
+                <div className="text-center bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-4">
+                  <div className="flex items-baseline justify-center gap-1">
+                    <span className="text-4xl font-bold text-zinc-900 dark:text-white">${formatPrice(followers)}</span>
+                  </div>
+                  <div className="text-sm text-zinc-500 mt-1">
+                    ${PRICE_PER_FOLLOWER.toFixed(2)} per follower
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleNext}
+                  className="w-full cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-highlight text-black hover:bg-highlight/90 flex items-center justify-center gap-2"
+                >
+                  Continue
+                  <DynamicIcon name="arrow-right" className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            {/* Step 2: Enter Handle */}
+            {step === 2 && (
+              <div className="space-y-8">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Enter your Instagram handle</h3>
+                  <p className="text-sm text-zinc-500 mt-1">We&apos;ll deliver {followers.toLocaleString()} followers to this account</p>
+                </div>
+
+                <div className="relative">
+                  <div className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 font-semibold">@</div>
+                  <input
+                    type="text"
+                    value={handle}
+                    onChange={(e) => setHandle(e.target.value.replace(/[^a-zA-Z0-9._]/g, ""))}
+                    placeholder="yourusername"
+                    className="w-full pl-10 pr-4 py-4 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl text-lg font-medium text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-highlight focus:border-transparent"
+                    autoFocus
+                  />
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleBack}
+                    className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={handleNext}
+                    disabled={handle.trim().length === 0}
+                    className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-highlight text-black hover:bg-highlight/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    Continue
+                    <DynamicIcon name="arrow-right" className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
+            )}
 
-              {/* Features List */}
-              <ul className="space-y-4 mb-8 flex-grow">
-                {plan.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-center gap-2">
-                    <DynamicIcon
-                      name="check-circle"
-                      className={`size-4 flex-shrink-0 mt-0.5 ${
-                        plan.highlighted
-                          ? "text-highlight"
-                          : "text-zinc-400 dark:text-zinc-600"
-                      }`}
-                    />
-                    <span className="text-sm text-zinc-700 dark:text-zinc-300">
-                      {feature}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+            {/* Step 3: Confirm & Pay */}
+            {step === 3 && (
+              <div className="space-y-6">
+                <div className="text-center">
+                  <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Confirm your order</h3>
+                </div>
 
-              {/* CTA Button */}
-              <button
-                className={`w-full cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all ${
-                  plan.highlighted
-                    ? "bg-highlight text-black hover:bg-highlight/90"
-                    : "bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800"
-                }`}
-              >
-                {plan.cta}
-              </button>
+                <div className="bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-6 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-600 dark:text-zinc-400">Account</span>
+                    <span className="font-semibold text-zinc-900 dark:text-white">@{handle.replace("@", "")}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-600 dark:text-zinc-400">Followers</span>
+                    <span className="font-semibold text-zinc-900 dark:text-white">{followers.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-zinc-600 dark:text-zinc-400">Delivery</span>
+                    <span className="font-semibold text-zinc-900 dark:text-white">24-72 hours</span>
+                  </div>
+                  <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4 flex justify-between items-center">
+                    <span className="font-bold text-zinc-900 dark:text-white">Total</span>
+                    <span className="text-2xl font-black text-zinc-900 dark:text-white">${formatPrice(followers)}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm text-zinc-500">
+                  <DynamicIcon name="shield-check" className="w-4 h-4 text-highlight" />
+                  <span>Money-back guarantee if we don&apos;t deliver</span>
+                </div>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleBack}
+                    className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                  >
+                    Back
+                  </button>
+                  <button
+                    onClick={handleCheckout}
+                    className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-highlight text-black hover:bg-highlight/90 flex items-center justify-center gap-2"
+                  >
+                    <DynamicIcon name="lock" className="w-4 h-4" />
+                    Pay ${formatPrice(followers)}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Features below card */}
+          <div className="flex flex-wrap justify-center gap-4 mt-8 text-sm text-zinc-500">
+            <div className="flex items-center gap-1">
+              <DynamicIcon name="check-circle" className="w-4 h-4 text-highlight" />
+              <span>Real followers</span>
             </div>
-          ))}
+            <div className="flex items-center gap-1">
+              <DynamicIcon name="check-circle" className="w-4 h-4 text-highlight" />
+              <span>No password needed</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <DynamicIcon name="check-circle" className="w-4 h-4 text-highlight" />
+              <span>30-day refill guarantee</span>
+            </div>
+          </div>
         </motion.div>
-
-        {/* Bottom Note */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="text-center mt-12 text-sm text-zinc-600 dark:text-zinc-400"
-        >
-          All plans include a 14-day free trial. No credit card required.{" "}
-          <a href="#" className="text-zinc-900 dark:text-white font-semibold hover:underline">
-            Compare plans →
-          </a>
-        </motion.p>
       </div>
     </section>
   );
 }
-
