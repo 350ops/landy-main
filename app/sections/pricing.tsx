@@ -4,6 +4,10 @@ import { useState } from "react";
 import { DynamicIcon } from "lucide-react/dynamic";
 import { cubicBezier } from "motion/react";
 import * as motion from "motion/react-client";
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, ExpressCheckoutElement } from '@stripe/react-stripe-js';
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const PRICE_PER_FOLLOWER = 0.05;
 const MIN_FOLLOWERS = 50;
@@ -18,23 +22,34 @@ export function Pricing() {
   const [followers, setFollowers] = useState(500);
   const [handle, setHandle] = useState("");
   const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 1) {
       setStep(2);
     } else if (step === 2 && handle.trim().length > 0) {
-      setStep(3);
+      try {
+        setIsLoading(true);
+        const res = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ followers, handle }),
+        });
+        const data = await res.json();
+        setClientSecret(data.clientSecret);
+        setStep(3);
+      } catch (error) {
+        console.error('Failed to create payment intent', error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
   const handleBack = () => {
     if (step === 2) setStep(1);
     if (step === 3) setStep(2);
-  };
-
-  const handleCheckout = () => {
-    // Stripe integration will go here
-    alert(`Order placed! ${followers} followers for @${handle.replace("@", "")} — $${formatPrice(followers)}. Stripe integration coming soon.`);
   };
 
   return (
@@ -75,9 +90,8 @@ export function Pricing() {
           <div className="flex items-center justify-center gap-2 mb-8">
             {[1, 2, 3].map((s) => (
               <div key={s} className="flex items-center gap-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                  step >= s ? "bg-highlight text-black" : "bg-zinc-200 dark:bg-zinc-800 text-zinc-500"
-                }`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${step >= s ? "bg-highlight text-black" : "bg-zinc-200 dark:bg-zinc-800 text-zinc-500"
+                  }`}>
                   {step > s ? <DynamicIcon name="check" className="w-4 h-4" /> : s}
                 </div>
                 {s < 3 && (
@@ -164,11 +178,11 @@ export function Pricing() {
                   </button>
                   <button
                     onClick={handleNext}
-                    disabled={handle.trim().length === 0}
+                    disabled={handle.trim().length === 0 || isLoading}
                     className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-highlight text-black hover:bg-highlight/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    Continue
-                    <DynamicIcon name="arrow-right" className="w-4 h-4" />
+                    {isLoading ? "Loading..." : "Continue"}
+                    {!isLoading && <DynamicIcon name="arrow-right" className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
@@ -205,20 +219,29 @@ export function Pricing() {
                   <span>Money-back guarantee if we don&apos;t deliver</span>
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-3 items-center">
                   <button
                     onClick={handleBack}
-                    className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                    className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 h-[48px]"
                   >
                     Back
                   </button>
-                  <button
-                    onClick={handleCheckout}
-                    className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-highlight text-black hover:bg-highlight/90 flex items-center justify-center gap-2"
-                  >
-                    <DynamicIcon name="lock" className="w-4 h-4" />
-                    Pay ${formatPrice(followers)}
-                  </button>
+                  <div className="flex-1">
+                    {clientSecret ? (
+                      <Elements stripe={stripePromise} options={{ clientSecret }}>
+                        <ExpressCheckoutElement
+                          onConfirm={() => {
+                            alert("Payment confirmed!");
+                            setStep(1);
+                          }}
+                        />
+                      </Elements>
+                    ) : (
+                      <div className="h-[48px] flex items-center justify-center text-sm text-zinc-500">
+                        Loading payment...
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
