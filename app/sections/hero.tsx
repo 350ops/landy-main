@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { DynamicIcon } from "lucide-react/dynamic";
 import * as motion from "motion/react-client"
 import { cubicBezier } from "motion/react";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, PaymentElement, ExpressCheckoutElement, useStripe, useElements } from "@stripe/react-stripe-js";
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const PRICE_PER_FOLLOWER = 0.05;
 const MIN_FOLLOWERS = 50;
@@ -14,26 +18,244 @@ function formatPrice(followers: number): string {
   return (followers * PRICE_PER_FOLLOWER).toFixed(2);
 }
 
+function CheckoutForm({ followers, handle, onBack, onSuccess }: {
+  followers: number;
+  handle: string;
+  onBack: () => void;
+  onSuccess: () => void;
+}) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [walletsAvailable, setWalletsAvailable] = useState<boolean | null>(null);
+  const [showCardFallback, setShowCardFallback] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+
+    setIsProcessing(true);
+    setErrorMessage(null);
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}?success=true`,
+      },
+      redirect: "if_required",
+    });
+
+    if (error) {
+      setErrorMessage(error.message ?? "Payment failed. Please try again.");
+      setIsProcessing(false);
+    } else {
+      onSuccess();
+    }
+  };
+
+  const handleExpressCheckoutConfirm = async () => {
+    if (!stripe || !elements) return;
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}?success=true`,
+      },
+      redirect: "if_required",
+    });
+
+    if (error) {
+      setErrorMessage(error.message ?? "Payment failed. Please try again.");
+    } else {
+      onSuccess();
+    }
+  };
+
+  const orderSummary = (
+    <div className="bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-4 space-y-2">
+      <div className="flex justify-between items-center text-sm">
+        <span className="text-zinc-600 dark:text-zinc-400">Account</span>
+        <span className="font-semibold text-zinc-900 dark:text-white">@{handle}</span>
+      </div>
+      <div className="flex justify-between items-center text-sm">
+        <span className="text-zinc-600 dark:text-zinc-400">Followers</span>
+        <span className="font-semibold text-zinc-900 dark:text-white">{followers.toLocaleString()}</span>
+      </div>
+      <div className="border-t border-zinc-200 dark:border-zinc-800 pt-2 flex justify-between items-center">
+        <span className="font-bold text-zinc-900 dark:text-white">Total</span>
+        <span className="text-xl font-black text-zinc-900 dark:text-white">${formatPrice(followers)}</span>
+      </div>
+    </div>
+  );
+
+  // If wallets are available, show them as the primary payment method
+  if (walletsAvailable && !showCardFallback) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Complete payment</h3>
+        </div>
+
+        {orderSummary}
+
+        <ExpressCheckoutElement
+          onConfirm={handleExpressCheckoutConfirm}
+          options={{
+            buttonType: { applePay: "buy", googlePay: "buy" },
+            buttonHeight: 48,
+          }}
+        />
+
+        {errorMessage && (
+          <div className="text-red-500 text-sm text-center">{errorMessage}</div>
+        )}
+
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800" />
+          <button
+            type="button"
+            onClick={() => setShowCardFallback(true)}
+            className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-pointer transition-colors"
+          >
+            Or pay with card
+          </button>
+          <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800" />
+        </div>
+
+        <button
+          type="button"
+          onClick={onBack}
+          className="w-full cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800"
+        >
+          Back
+        </button>
+
+        <div className="flex items-center justify-center gap-2 text-xs text-zinc-400">
+          <DynamicIcon name="shield-check" className="w-3 h-3" />
+          <span>Secured by Stripe. Money-back guarantee.</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Wallets not available OR user chose "pay with card" — show card form
+  return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="text-center">
+        <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Complete payment</h3>
+      </div>
+
+      {orderSummary}
+
+      {/* Hidden express checkout to detect wallet availability */}
+      {walletsAvailable === null && (
+        <div className="hidden">
+          <ExpressCheckoutElement
+            onReady={(e) => {
+              setWalletsAvailable(e.availablePaymentMethods ? Object.values(e.availablePaymentMethods).some(Boolean) : false);
+            }}
+            onConfirm={handleExpressCheckoutConfirm}
+          />
+        </div>
+      )}
+
+      <div className="rounded-xl overflow-hidden">
+        <PaymentElement />
+      </div>
+
+      {errorMessage && (
+        <div className="text-red-500 text-sm text-center">{errorMessage}</div>
+      )}
+
+      <div className="flex gap-3">
+        <button
+          type="button"
+          onClick={() => {
+            if (showCardFallback) {
+              setShowCardFallback(false);
+            } else {
+              onBack();
+            }
+          }}
+          disabled={isProcessing}
+          className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 disabled:opacity-50"
+        >
+          Back
+        </button>
+        <button
+          type="submit"
+          disabled={!stripe || isProcessing}
+          className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-highlight text-black hover:bg-highlight/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        >
+          {isProcessing ? (
+            <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+          ) : (
+            <>
+              <DynamicIcon name="lock" className="w-4 h-4" />
+              Pay ${formatPrice(followers)}
+            </>
+          )}
+        </button>
+      </div>
+
+      <div className="flex items-center justify-center gap-2 text-xs text-zinc-400">
+        <DynamicIcon name="shield-check" className="w-3 h-3" />
+        <span>Secured by Stripe. Money-back guarantee.</span>
+      </div>
+    </form>
+  );
+}
+
 export function Hero() {
   const [followers, setFollowers] = useState(500);
   const [handle, setHandle] = useState("");
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1); // 4 = success
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [isLoadingPayment, setIsLoadingPayment] = useState(false);
+
+  const sanitizedHandle = handle.replace(/[^a-zA-Z0-9._]/g, "").trim();
+
+  const createPaymentIntent = useCallback(async () => {
+    setIsLoadingPayment(true);
+    try {
+      const res = await fetch("/api/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ followers, handle: sanitizedHandle }),
+      });
+      const data = await res.json();
+      if (data.clientSecret) {
+        setClientSecret(data.clientSecret);
+      }
+    } catch (err) {
+      console.error("Failed to create payment intent:", err);
+    } finally {
+      setIsLoadingPayment(false);
+    }
+  }, [followers, sanitizedHandle]);
+
+  useEffect(() => {
+    if (step === 3 && !clientSecret) {
+      createPaymentIntent();
+    }
+  }, [step, clientSecret, createPaymentIntent]);
 
   const handleNext = () => {
     if (step === 1) {
       setStep(2);
-    } else if (step === 2 && handle.trim().length > 0) {
+    } else if (step === 2 && sanitizedHandle.length > 0) {
+      setClientSecret(null); // reset in case they changed values
       setStep(3);
     }
   };
 
   const handleBack = () => {
     if (step === 2) setStep(1);
-    if (step === 3) setStep(2);
-  };
-
-  const handleCheckout = () => {
-    alert(`Order placed! ${followers} followers for @${handle.replace("@", "")} — $${formatPrice(followers)}. Stripe integration coming soon.`);
+    if (step === 3) {
+      setClientSecret(null);
+      setStep(2);
+    }
   };
 
   return (
@@ -85,20 +307,22 @@ export function Hero() {
           >
             <div className="w-full max-w-md">
               {/* Progress Steps */}
-              <div className="flex items-center justify-center gap-2 mb-6">
-                {[1, 2, 3].map((s) => (
-                  <div key={s} className="flex items-center gap-2">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                      step >= s ? "bg-highlight text-black" : "bg-zinc-200 dark:bg-zinc-800 text-zinc-500"
-                    }`}>
-                      {step > s ? <DynamicIcon name="check" className="w-4 h-4" /> : s}
+              {step !== 4 && (
+                <div className="flex items-center justify-center gap-2 mb-6">
+                  {[1, 2, 3].map((s) => (
+                    <div key={s} className="flex items-center gap-2">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+                        step >= s ? "bg-highlight text-black" : "bg-zinc-200 dark:bg-zinc-800 text-zinc-500"
+                      }`}>
+                        {step > s ? <DynamicIcon name="check" className="w-4 h-4" /> : s}
+                      </div>
+                      {s < 3 && (
+                        <div className={`w-12 h-0.5 transition-all ${step > s ? "bg-highlight" : "bg-zinc-200 dark:bg-zinc-800"}`} />
+                      )}
                     </div>
-                    {s < 3 && (
-                      <div className={`w-12 h-0.5 transition-all ${step > s ? "bg-highlight" : "bg-zinc-200 dark:bg-zinc-800"}`} />
-                    )}
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
 
               {/* Main Card */}
               <div className="relative bg-white dark:bg-zinc-950 rounded-3xl p-8 border-2 border-highlight shadow-2xl shadow-highlight/20">
@@ -187,71 +411,77 @@ export function Hero() {
                   </div>
                 )}
 
-                {/* Step 3: Confirm & Pay */}
+                {/* Step 3: Stripe Payment */}
                 {step === 3 && (
-                  <div className="space-y-6">
-                    <div className="text-center">
-                      <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Confirm your order</h3>
-                    </div>
-
-                    <div className="bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-6 space-y-4">
-                      <div className="flex justify-between items-center">
-                        <span className="text-zinc-600 dark:text-zinc-400">Account</span>
-                        <span className="font-semibold text-zinc-900 dark:text-white">@{handle.replace("@", "")}</span>
+                  <>
+                    {isLoadingPayment || !clientSecret ? (
+                      <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                        <div className="w-8 h-8 border-2 border-zinc-300 border-t-highlight rounded-full animate-spin" />
+                        <p className="text-sm text-zinc-500">Preparing secure checkout...</p>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-zinc-600 dark:text-zinc-400">Followers</span>
-                        <span className="font-semibold text-zinc-900 dark:text-white">{followers.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-zinc-600 dark:text-zinc-400">Delivery</span>
-                        <span className="font-semibold text-zinc-900 dark:text-white">24-72 hours</span>
-                      </div>
-                      <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4 flex justify-between items-center">
-                        <span className="font-bold text-zinc-900 dark:text-white">Total</span>
-                        <span className="text-2xl font-black text-zinc-900 dark:text-white">${formatPrice(followers)}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-2 text-sm text-zinc-500">
-                      <DynamicIcon name="shield-check" className="w-4 h-4 text-highlight" />
-                      <span>Money-back guarantee if we don&apos;t deliver</span>
-                    </div>
-
-                    <div className="flex gap-3">
-                      <button
-                        onClick={handleBack}
-                        className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800"
+                    ) : (
+                      <Elements
+                        stripe={stripePromise}
+                        options={{
+                          clientSecret,
+                          appearance: {
+                            theme: "stripe",
+                            variables: {
+                              colorPrimary: "#a3e635",
+                              borderRadius: "12px",
+                            },
+                          },
+                        }}
                       >
-                        Back
-                      </button>
-                      <button
-                        onClick={handleCheckout}
-                        className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-highlight text-black hover:bg-highlight/90 flex items-center justify-center gap-2"
-                      >
-                        <DynamicIcon name="lock" className="w-4 h-4" />
-                        Pay ${formatPrice(followers)}
-                      </button>
+                        <CheckoutForm
+                          followers={followers}
+                          handle={sanitizedHandle}
+                          onBack={handleBack}
+                          onSuccess={() => setStep(4)}
+                        />
+                      </Elements>
+                    )}
+                  </>
+                )}
+
+                {/* Step 4: Success */}
+                {step === 4 && (
+                  <div className="text-center space-y-4 py-4">
+                    <div className="w-16 h-16 bg-highlight rounded-full flex items-center justify-center mx-auto">
+                      <DynamicIcon name="check" className="w-8 h-8 text-black" />
                     </div>
+                    <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Payment successful!</h3>
+                    <p className="text-zinc-500">
+                      Your order for {followers.toLocaleString()} followers to <span className="font-semibold text-zinc-900 dark:text-white">@{sanitizedHandle}</span> is being processed.
+                    </p>
+                    <p className="text-sm text-zinc-400">Delivery begins within a few hours.</p>
+                    <button
+                      onClick={() => { setStep(1); setHandle(""); setFollowers(500); setClientSecret(null); }}
+                      className="mt-4 px-6 py-2 cursor-pointer rounded-xl text-sm font-medium bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition-all"
+                    >
+                      Place another order
+                    </button>
                   </div>
                 )}
               </div>
 
               {/* Features below card */}
-              <div className="flex flex-wrap justify-center gap-4 mt-6 text-sm text-zinc-500">
-                <div className="flex items-center gap-1">
-                  <DynamicIcon name="check-circle" className="w-4 h-4 text-highlight" />
-                  <span>Real followers</span>
+              {step !== 4 && (
+                <div className="flex flex-wrap justify-center gap-4 mt-6 text-sm text-zinc-500">
+                  <div className="flex items-center gap-1">
+                    <DynamicIcon name="check-circle" className="w-4 h-4 text-highlight" />
+                    <span>Real followers</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <DynamicIcon name="check-circle" className="w-4 h-4 text-highlight" />
+                    <span>No password needed</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <DynamicIcon name="check-circle" className="w-4 h-4 text-highlight" />
+                    <span>30-day refill guarantee</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <DynamicIcon name="check-circle" className="w-4 h-4 text-highlight" />
-                  <span>No password needed</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <DynamicIcon name="check-circle" className="w-4 h-4 text-highlight" />
-                  <span>30-day refill guarantee</span>
-                </div>
-              </div>
+              )}
             </div>
           </motion.div>
         </div>

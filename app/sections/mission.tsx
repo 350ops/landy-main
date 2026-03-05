@@ -10,18 +10,18 @@ export function Mission() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Column - Visual */}
           <motion.div
-            initial={{ opacity: 0, x: -200 }}
+            initial={{ opacity: 0, x: -60 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: cubicBezier(0.4, 0, 0.2, 1) }}
+            viewport={{ once: true, amount: 0.05 }}
+            transition={{ duration: 0.4, delay: 0.1, ease: cubicBezier(0.4, 0, 0.2, 1) }}
             className="relative h-[500px] flex items-center justify-center order-2 lg:order-1">
             <div className="relative">
               {/* Decorative Background */}
               <motion.div
               initial={{ opacity: 0, rotate: 0 }}
               whileInView={{ opacity: 1, rotate: 18 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.8, delay: 0.7, ease: cubicBezier(0.4, 0, 0.2, 1) }}
+              viewport={{ once: true, amount: 0.05 }}
+              transition={{ duration: 0.4, delay: 0.25, ease: cubicBezier(0.4, 0, 0.2, 1) }}
               className="absolute inset-0 bg-highlight rounded-[4rem] transform scale-95"></motion.div>
 
               {/* Steps Card */}
@@ -58,10 +58,10 @@ export function Mission() {
           {/* Right Column - Content */}
           <motion.div
 
-          initial={{ opacity: 0, y: 200 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, delay: 0, ease: cubicBezier(0.4, 0, 0.2, 1) }}
+          viewport={{ once: true, amount: 0.05 }}
+          transition={{ duration: 0.4, delay: 0, ease: cubicBezier(0.4, 0, 0.2, 1) }}
           className=" order-1 lg:order-2">
             <div className="inline-block px-4 py-1.5 bg-highlight rounded-full">
               <span className="text-xs uppercase font-bold text-black">How It Works</span>

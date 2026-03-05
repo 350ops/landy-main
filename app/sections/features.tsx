@@ -37,10 +37,10 @@ export function Features() {
       <div className="max-w-6xl mx-auto">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 100 }}
+          initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.5, delay:0.2, ease: cubicBezier(0.4, 0, 0.2, 1) }}
+          viewport={{ once: true, amount: 0.05 }}
+          transition={{ duration: 0.35, delay: 0, ease: cubicBezier(0.4, 0, 0.2, 1) }}
           className="text-center mb-16 space-y-4"
         >
           <div className="inline-block px-4 py-1.5 bg-highlight rounded-full">
@@ -57,12 +57,12 @@ export function Features() {
 
         {/* Features Grid */}
         <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true }}
+        viewport={{ once: true, amount: 0.05 }}
         transition={{
-          duration: 0.5,
-          delay:0.4,
+          duration: 0.35,
+          delay: 0.1,
           ease: cubicBezier(0.4, 0, 0.2, 1)
         }}
         className="grid md:grid-cols-2 lg:grid-cols-4 gap-2">

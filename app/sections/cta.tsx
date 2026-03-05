@@ -36,10 +36,10 @@ export function CTA() {
 
         {/* Stats Row */}
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.3, ease: cubicBezier(0.4, 0, 0.2, 1) }}
+          viewport={{ once: true, amount: 0.05 }}
+          transition={{ duration: 0.35, delay: 0.05, ease: cubicBezier(0.4, 0, 0.2, 1) }}
           className="flex flex-wrap justify-center gap-8 md:gap-16 pt-12"
         >
           <div className="text-center">
