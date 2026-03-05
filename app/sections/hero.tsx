@@ -5,7 +5,7 @@ import { DynamicIcon } from "lucide-react/dynamic";
 import * as motion from "motion/react-client"
 import { cubicBezier } from "motion/react";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { Elements, PaymentElement, ExpressCheckoutElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -28,6 +28,8 @@ function CheckoutForm({ followers, handle, onBack, onSuccess }: {
   const elements = useElements();
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [walletsAvailable, setWalletsAvailable] = useState<boolean | null>(null);
+  const [showCardFallback, setShowCardFallback] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,26 +54,111 @@ function CheckoutForm({ followers, handle, onBack, onSuccess }: {
     }
   };
 
+  const handleExpressCheckoutConfirm = async () => {
+    if (!stripe || !elements) return;
+
+    const { error } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}?success=true`,
+      },
+      redirect: "if_required",
+    });
+
+    if (error) {
+      setErrorMessage(error.message ?? "Payment failed. Please try again.");
+    } else {
+      onSuccess();
+    }
+  };
+
+  const orderSummary = (
+    <div className="bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-4 space-y-2">
+      <div className="flex justify-between items-center text-sm">
+        <span className="text-zinc-600 dark:text-zinc-400">Account</span>
+        <span className="font-semibold text-zinc-900 dark:text-white">@{handle}</span>
+      </div>
+      <div className="flex justify-between items-center text-sm">
+        <span className="text-zinc-600 dark:text-zinc-400">Followers</span>
+        <span className="font-semibold text-zinc-900 dark:text-white">{followers.toLocaleString()}</span>
+      </div>
+      <div className="border-t border-zinc-200 dark:border-zinc-800 pt-2 flex justify-between items-center">
+        <span className="font-bold text-zinc-900 dark:text-white">Total</span>
+        <span className="text-xl font-black text-zinc-900 dark:text-white">${formatPrice(followers)}</span>
+      </div>
+    </div>
+  );
+
+  // If wallets are available, show them as the primary payment method
+  if (walletsAvailable && !showCardFallback) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center">
+          <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Complete payment</h3>
+        </div>
+
+        {orderSummary}
+
+        <ExpressCheckoutElement
+          onConfirm={handleExpressCheckoutConfirm}
+          options={{
+            buttonType: { applePay: "buy", googlePay: "buy" },
+            buttonHeight: 48,
+          }}
+        />
+
+        {errorMessage && (
+          <div className="text-red-500 text-sm text-center">{errorMessage}</div>
+        )}
+
+        <div className="flex items-center gap-4">
+          <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800" />
+          <button
+            type="button"
+            onClick={() => setShowCardFallback(true)}
+            className="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 cursor-pointer transition-colors"
+          >
+            Or pay with card
+          </button>
+          <div className="flex-1 h-px bg-zinc-200 dark:bg-zinc-800" />
+        </div>
+
+        <button
+          type="button"
+          onClick={onBack}
+          className="w-full cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800"
+        >
+          Back
+        </button>
+
+        <div className="flex items-center justify-center gap-2 text-xs text-zinc-400">
+          <DynamicIcon name="shield-check" className="w-3 h-3" />
+          <span>Secured by Stripe. Money-back guarantee.</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Wallets not available OR user chose "pay with card" — show card form
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="text-center">
         <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">Complete payment</h3>
       </div>
 
-      <div className="bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-4 space-y-2">
-        <div className="flex justify-between items-center text-sm">
-          <span className="text-zinc-600 dark:text-zinc-400">Account</span>
-          <span className="font-semibold text-zinc-900 dark:text-white">@{handle}</span>
+      {orderSummary}
+
+      {/* Hidden express checkout to detect wallet availability */}
+      {walletsAvailable === null && (
+        <div className="hidden">
+          <ExpressCheckoutElement
+            onReady={(e) => {
+              setWalletsAvailable(e.availablePaymentMethods ? Object.values(e.availablePaymentMethods).some(Boolean) : false);
+            }}
+            onConfirm={handleExpressCheckoutConfirm}
+          />
         </div>
-        <div className="flex justify-between items-center text-sm">
-          <span className="text-zinc-600 dark:text-zinc-400">Followers</span>
-          <span className="font-semibold text-zinc-900 dark:text-white">{followers.toLocaleString()}</span>
-        </div>
-        <div className="border-t border-zinc-200 dark:border-zinc-800 pt-2 flex justify-between items-center">
-          <span className="font-bold text-zinc-900 dark:text-white">Total</span>
-          <span className="text-xl font-black text-zinc-900 dark:text-white">${formatPrice(followers)}</span>
-        </div>
-      </div>
+      )}
 
       <div className="rounded-xl overflow-hidden">
         <PaymentElement />
@@ -84,7 +171,13 @@ function CheckoutForm({ followers, handle, onBack, onSuccess }: {
       <div className="flex gap-3">
         <button
           type="button"
-          onClick={onBack}
+          onClick={() => {
+            if (showCardFallback) {
+              setShowCardFallback(false);
+            } else {
+              onBack();
+            }
+          }}
           disabled={isProcessing}
           className="flex-1 cursor-pointer py-3 px-6 rounded-xl font-semibold transition-all bg-zinc-100 dark:bg-zinc-900 text-zinc-900 dark:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 disabled:opacity-50"
         >
