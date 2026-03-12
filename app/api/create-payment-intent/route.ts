@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-02-25.clover",
-});
+function getStripe() {
+  return new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: "2026-02-25.clover",
+  });
+}
 
 const PRICE_PER_FOLLOWER = 0.05;
 const MIN_FOLLOWERS = 50;
@@ -44,7 +46,7 @@ export async function POST(request: Request) {
     // Calculate amount in cents
     const amountInCents = Math.round(followers * PRICE_PER_FOLLOWER * 100);
 
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntent = await getStripe().paymentIntents.create({
       amount: amountInCents,
       currency: "usd",
       metadata: {
