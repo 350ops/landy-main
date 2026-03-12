@@ -6,6 +6,7 @@ import * as motion from "motion/react-client"
 import { cubicBezier } from "motion/react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, PaymentElement, ExpressCheckoutElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { formatQar, formatQarFromFollowers } from "@/lib/currency";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -13,10 +14,6 @@ const PRICE_PER_FOLLOWER = 0.05;
 const MIN_FOLLOWERS = 50;
 const MAX_FOLLOWERS = 3000;
 const STEP = 50;
-
-function formatPrice(followers: number): string {
-  return (followers * PRICE_PER_FOLLOWER).toFixed(2);
-}
 
 function CheckoutForm({ followers, handle, onBack, onSuccess }: {
   followers: number;
@@ -84,7 +81,7 @@ function CheckoutForm({ followers, handle, onBack, onSuccess }: {
       </div>
       <div className="border-t border-zinc-200 dark:border-zinc-800 pt-2 flex justify-between items-center">
         <span className="font-bold text-zinc-900 dark:text-white">Total</span>
-        <span className="text-xl font-black text-zinc-900 dark:text-white">${formatPrice(followers)}</span>
+        <span className="text-xl font-black text-zinc-900 dark:text-white">{formatQarFromFollowers(followers, PRICE_PER_FOLLOWER)}</span>
       </div>
     </div>
   );
@@ -133,7 +130,7 @@ function CheckoutForm({ followers, handle, onBack, onSuccess }: {
 
         <div className="flex items-center justify-center gap-2 text-xs text-zinc-400">
           <DynamicIcon name="shield-check" className="w-3 h-3" />
-          <span>Secured by Stripe. Money-back guarantee.</span>
+          <span>Secured by Stripe. Checkout is processed in USD.</span>
         </div>
       </div>
     );
@@ -193,7 +190,7 @@ function CheckoutForm({ followers, handle, onBack, onSuccess }: {
           ) : (
             <>
               <DynamicIcon name="lock" className="w-4 h-4" />
-              Pay ${formatPrice(followers)}
+              Pay {formatQarFromFollowers(followers, PRICE_PER_FOLLOWER)}
             </>
           )}
         </button>
@@ -201,7 +198,7 @@ function CheckoutForm({ followers, handle, onBack, onSuccess }: {
 
       <div className="flex items-center justify-center gap-2 text-xs text-zinc-400">
         <DynamicIcon name="shield-check" className="w-3 h-3" />
-        <span>Secured by Stripe. Money-back guarantee.</span>
+        <span>Secured by Stripe. Checkout is processed in USD.</span>
       </div>
     </form>
   );
@@ -355,11 +352,12 @@ export function Hero() {
                     {/* Price */}
                     <div className="text-center bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-4">
                       <div className="flex items-baseline justify-center gap-1">
-                        <span className="text-4xl font-bold text-zinc-900 dark:text-white">${formatPrice(followers)}</span>
+                        <span className="text-4xl font-bold text-zinc-900 dark:text-white">{formatQarFromFollowers(followers, PRICE_PER_FOLLOWER)}</span>
                       </div>
                       <div className="text-sm text-zinc-500 mt-1">
-                        ${PRICE_PER_FOLLOWER.toFixed(2)} per follower
+                        {formatQar(PRICE_PER_FOLLOWER)} per follower
                       </div>
+                      <div className="text-xs text-zinc-400 mt-2">Checkout is still processed in USD.</div>
                     </div>
 
                     <button

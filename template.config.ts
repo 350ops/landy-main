@@ -34,7 +34,7 @@ export const templateConfig = {
     maxFollowers: 3000,
     defaultFollowers: 500,
     pricePerFollower: 0.05,
-    currency: "USD",
+    currency: "QAR",
   },
 
   // Theme Colors (Tailwind classes)

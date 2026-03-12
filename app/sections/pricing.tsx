@@ -6,6 +6,7 @@ import { cubicBezier } from "motion/react";
 import * as motion from "motion/react-client";
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, ExpressCheckoutElement } from '@stripe/react-stripe-js';
+import { formatQar, formatQarFromFollowers } from "@/lib/currency";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -13,10 +14,6 @@ const PRICE_PER_FOLLOWER = 0.05;
 const MIN_FOLLOWERS = 50;
 const MAX_FOLLOWERS = 3000;
 const STEP = 50;
-
-function formatPrice(followers: number): string {
-  return (followers * PRICE_PER_FOLLOWER).toFixed(2);
-}
 
 export function Pricing() {
   const [followers, setFollowers] = useState(500);
@@ -132,11 +129,12 @@ export function Pricing() {
                 {/* Price */}
                 <div className="text-center bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-4">
                   <div className="flex items-baseline justify-center gap-1">
-                    <span className="text-4xl font-bold text-zinc-900 dark:text-white">${formatPrice(followers)}</span>
+                    <span className="text-4xl font-bold text-zinc-900 dark:text-white">{formatQarFromFollowers(followers, PRICE_PER_FOLLOWER)}</span>
                   </div>
                   <div className="text-sm text-zinc-500 mt-1">
-                    ${PRICE_PER_FOLLOWER.toFixed(2)} per follower
+                    {formatQar(PRICE_PER_FOLLOWER)} per follower
                   </div>
+                  <div className="text-xs text-zinc-400 mt-2">Checkout is still processed in USD.</div>
                 </div>
 
                 <button
@@ -210,7 +208,7 @@ export function Pricing() {
                   </div>
                   <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4 flex justify-between items-center">
                     <span className="font-bold text-zinc-900 dark:text-white">Total</span>
-                    <span className="text-2xl font-black text-zinc-900 dark:text-white">${formatPrice(followers)}</span>
+                    <span className="text-2xl font-black text-zinc-900 dark:text-white">{formatQarFromFollowers(followers, PRICE_PER_FOLLOWER)}</span>
                   </div>
                 </div>
 
