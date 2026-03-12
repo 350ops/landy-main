@@ -8,7 +8,41 @@ function getStripe() {
 }
 
 function getWebhookSecret() {
-  return process.env.STRIPE_WEBHOOK_SECRET!;
+  return process.env.STRIPE_WEBHOOK_SECRET!.trim();
+}
+
+const JAP_API_URL = "https://justanotherpanel.com/api/v2";
+const JAP_SERVICE_ID = 7866; // Instagram Followers [WW] [Max: 1M] [Refill: 365Days]
+
+interface JAPOrderResponse {
+  order?: number;
+  error?: string;
+}
+
+async function fulfillOrder({
+  followers,
+  handle,
+}: {
+  followers: number;
+  handle: string;
+}): Promise<JAPOrderResponse> {
+  const apiKey = process.env.JAP_API_KEY!;
+  const link = `https://www.instagram.com/${handle}`;
+
+  const response = await fetch(JAP_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      key: apiKey,
+      action: "add",
+      service: JAP_SERVICE_ID,
+      link,
+      quantity: followers,
+    }),
+  });
+
+  const data: JAPOrderResponse = await response.json();
+  return data;
 }
 
 export async function POST(request: Request) {
@@ -40,11 +74,31 @@ export async function POST(request: Request) {
       const { followers, instagram_handle } = paymentIntent.metadata;
 
       console.log(
-        `Payment succeeded: ${followers} followers for @${instagram_handle} ($${(paymentIntent.amount / 100).toFixed(2)})`
+        `✅ Payment succeeded: ${followers} followers for @${instagram_handle} ($${(paymentIntent.amount / 100).toFixed(2)})`
       );
 
-      // TODO: Call panel API to fulfill the follower order
-      // await fulfillOrder({ followers: parseInt(followers), handle: instagram_handle });
+      try {
+        const japResponse = await fulfillOrder({
+          followers: parseInt(followers),
+          handle: instagram_handle,
+        });
+
+        if (japResponse.order) {
+          console.log(
+            `✅ JAP order placed: #${japResponse.order} — ${followers} followers for @${instagram_handle}`
+          );
+        } else {
+          console.error(
+            `❌ JAP order failed for @${instagram_handle}:`,
+            JSON.stringify(japResponse)
+          );
+        }
+      } catch (error) {
+        console.error(
+          `❌ JAP API call failed for @${instagram_handle}:`,
+          error
+        );
+      }
 
       break;
     }
@@ -52,7 +106,7 @@ export async function POST(request: Request) {
     case "payment_intent.payment_failed": {
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
       console.error(
-        `Payment failed for @${paymentIntent.metadata.instagram_handle}:`,
+        `❌ Payment failed for @${paymentIntent.metadata.instagram_handle}:`,
         paymentIntent.last_payment_error?.message
       );
       break;
