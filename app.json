@@ -4,6 +4,12 @@
       "eas": {
         "projectId": "5df31b37-4b06-4053-8e41-544fa7d321df"
       }
+    },
+    "ios": {
+      "bundleIdentifier": "com.mmdev13.nexttemplatelanding",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     }
   }
 }
