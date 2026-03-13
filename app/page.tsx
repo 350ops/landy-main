@@ -1,4 +1,5 @@
 import { Hero } from "./sections/hero";
+import { Pricing } from "./sections/pricing";
 import { Features } from "./sections/features";
 import { Mission } from "./sections/mission";
 import { FAQ } from "./sections/faq";
@@ -13,6 +14,7 @@ export default function Home() {
     <main className="min-h-screen">
       <Navbar />
       <Hero />
+      <Pricing />
       <Features />
       <Logos />
       <Mission />

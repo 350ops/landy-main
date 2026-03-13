@@ -61,8 +61,8 @@ export function Navbar() {
           {/* CTA Buttons */}
           <div className="flex items-center gap-3">
             <ThemeToggle />
-            <button onClick={() => scrollToSection("hero")} className="px-4 cursor-pointer py-2 text-xs bg-black dark:bg-white text-white dark:text-black rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors">
-              Get Followers
+            <button onClick={() => scrollToSection("pricing")} className="px-4 cursor-pointer py-2 text-xs bg-black dark:bg-white text-white dark:text-black rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-100 transition-colors">
+              Start Growing
             </button>
           </div>
         </div>
